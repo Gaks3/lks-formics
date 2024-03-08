@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
+import { useCallback, useRef, useState, useTransition } from 'react'
 import { FormElementInstance, FormElements } from './FormElements'
 import { toast } from './ui/use-toast'
 import { SubmitForm } from '@/actions/form'
@@ -13,11 +13,13 @@ const FormSubmit = ({
   title,
   description,
   content,
+  view,
 }: {
   formUrl: string
   title: string
   description: string
   content: FormElementInstance[]
+  view?: boolean
 }) => {
   const formValues = useRef<{ [key: string]: string | string[] }>({})
   const formErrors = useRef<{ [key: string]: boolean }>({})
@@ -76,7 +78,17 @@ const FormSubmit = ({
     }
   }
 
-  if (submitted) return <h1>Terimakasih</h1>
+  if (submitted)
+    return (
+      <div className='flex justify-center w-full h-full p-8'>
+        <div className='w-full border rounded-md border-border'>
+          <div className='w-full h-3 bg-primary rounded-t-md' />
+          <div className='p-8 space-y-3'>
+            <h1 className='text-3xl font-bold'>Thankyou for submitting!</h1>
+          </div>
+        </div>
+      </div>
+    )
 
   return (
     <div className='flex justify-center w-full h-full p-8'>
@@ -106,11 +118,11 @@ const FormSubmit = ({
           )
         })}
         <Button
-          className='mt-8'
+          className='mt-8 disabled:cursor-not-allowed'
           onClick={() => {
             startTransition(submitForm)
           }}
-          disabled={pending}
+          disabled={!view ? pending : view}
         >
           {!pending && (
             <>
