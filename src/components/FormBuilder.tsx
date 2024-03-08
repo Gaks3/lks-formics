@@ -10,7 +10,6 @@ import {
 import type { Form } from '@prisma/client'
 import { ClipboardList } from 'lucide-react'
 import Link from 'next/link'
-import ThemeSwitcher from './ThemeSwitcher'
 import SaveFormButton from './SaveFormButton'
 import PublishFormButton from './PublishFormButton'
 import { UserButton } from '@clerk/nextjs'
