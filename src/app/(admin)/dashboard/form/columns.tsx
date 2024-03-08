@@ -1,10 +1,17 @@
 'use client'
 
+import ActionFormTable from '@/components/ActionFormTable'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Prisma } from '@prisma/client'
 import { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { ArrowDownUp } from 'lucide-react'
+import { ArrowDownUp, ChevronDown } from 'lucide-react'
 
 export type Form = {
   id: number
@@ -52,7 +59,33 @@ export const columns: ColumnDef<Form>[] = [
   },
   {
     accessorKey: 'published',
-    header: 'Status',
+    header: ({ table }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant='ghost' className='!ring-transparent w-full'>
+            Status
+            <ChevronDown className='ml-2 h-4 w-4' />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem
+            onClick={() => table.getColumn('published')?.setFilterValue('')}
+          >
+            None
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => table.getColumn('published')?.setFilterValue(false)}
+          >
+            Draft
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => table.getColumn('published')?.setFilterValue(true)}
+          >
+            Published
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
     cell: ({ row }) => (row.original.published ? 'Published' : 'Draft'),
   },
   {
@@ -94,5 +127,10 @@ export const columns: ColumnDef<Form>[] = [
       </Button>
     ),
     cell: ({ row }) => format(row.original.createdAt, 'yyyy-MM-d'),
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => <ActionFormTable id={row.original.id} />,
+    enableHiding: false,
   },
 ]
