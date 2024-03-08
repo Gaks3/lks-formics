@@ -4,7 +4,8 @@ import { currentUser } from '@clerk/nextjs'
 import prisma from '@/lib/prisma'
 import { FormSchema, FormSchemaType } from '@/schema/form'
 import { FormElementInstance } from '@/components/FormElements'
-import { getDates } from '@/lib/utils'
+import { OnlyAdmin, getDates } from '@/lib/utils'
+import { revalidatePath } from 'next/cache'
 
 class UserNotFoundErr extends Error {}
 
@@ -69,11 +70,14 @@ export const GetFormById = async (id: number) => {
   const user = await currentUser()
   if (!user) throw new UserNotFoundErr()
 
+  const where: { id: number; userId?: string } = {
+    id,
+  }
+
+  if (user.publicMetadata.role !== 'admin') where['userId'] = user.id
+
   return await prisma.form.findUnique({
-    where: {
-      id,
-      userId: user.id,
-    },
+    where,
   })
 }
 
@@ -84,11 +88,14 @@ export const UpdateFormContent = async (
   const user = await currentUser()
   if (!user) throw new UserNotFoundErr()
 
+  const where: { id: number; userId?: string } = {
+    id,
+  }
+
+  if (user.publicMetadata.role !== 'admin') where['userId'] = user.id
+
   return await prisma.form.update({
-    where: {
-      id,
-      userId: user.id,
-    },
+    where,
     data: {
       content,
     },
@@ -99,11 +106,14 @@ export const UpdateStatusForm = async (id: number, status: boolean) => {
   const user = await currentUser()
   if (!user) throw new UserNotFoundErr()
 
+  const where: { id: number; userId?: string } = {
+    id,
+  }
+
+  if (user.publicMetadata.role !== 'admin') where['userId'] = user.id
+
   return await prisma.form.update({
-    where: {
-      id,
-      userId: user.id,
-    },
+    where,
     data: {
       published: status,
     },
@@ -138,6 +148,7 @@ export async function GetFormContentByUrl(shareUrl: string) {
       content: true,
       name: true,
       description: true,
+      published: true,
     },
     where: {
       shareUrl,
@@ -155,11 +166,14 @@ export async function UpdateFormTitle(id: number, name: string) {
   const user = await currentUser()
   if (!user) throw new UserNotFoundErr()
 
+  const where: { id: number; userId?: string } = {
+    id,
+  }
+
+  if (user.publicMetadata.role !== 'admin') where['userId'] = user.id
+
   return await prisma.form.update({
-    where: {
-      id,
-      userId: user.id,
-    },
+    where,
     data: {
       name,
     },
@@ -173,10 +187,14 @@ export async function UpdateFormDesc(id: number, description: string) {
   const user = await currentUser()
   if (!user) throw new UserNotFoundErr()
 
+  const where: { id: number; userId?: string } = {
+    id,
+  }
+
+  if (user.publicMetadata.role !== 'admin') where['userId'] = user.id
+
   return await prisma.form.update({
-    where: {
-      id,
-    },
+    where,
     data: {
       description,
     },
@@ -187,11 +205,14 @@ export async function GetFormWithSubmissions(id: number) {
   const user = await currentUser()
   if (!user) throw new UserNotFoundErr()
 
+  const where: { id: number; userId?: string } = {
+    id,
+  }
+
+  if (user.publicMetadata.role !== 'admin') where['userId'] = user.id
+
   return await prisma.form.findUnique({
-    where: {
-      userId: user.id,
-      id,
-    },
+    where,
     include: {
       FormSubmissions: {
         orderBy: {
@@ -243,6 +264,8 @@ export async function GetMostUserFormByDate(startDate: Date, endDate: Date) {
 }
 
 export async function GetAllFormCount() {
+  await OnlyAdmin()
+
   return await prisma.form.count()
 }
 
@@ -256,4 +279,22 @@ export async function GetAllForms() {
       createdAt: 'desc',
     },
   })
+}
+
+export async function DeleteFormById(id: number) {
+  const user = await currentUser()
+  if (!user || user?.publicMetadata.role !== 'admin')
+    throw new UserNotFoundErr()
+
+  const where: { id: number; userId?: string } = {
+    id,
+  }
+
+  if (user.publicMetadata.role !== 'admin') where['userId'] = user.id
+
+  await prisma.form.delete({
+    where,
+  })
+
+  revalidatePath('/dashboard/form')
 }
