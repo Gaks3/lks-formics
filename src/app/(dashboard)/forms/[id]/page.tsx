@@ -2,16 +2,12 @@ import { GetFormById, GetFormWithSubmissions } from '@/actions/form'
 import FormDescChange from '@/components/FormDescChange'
 import { ElementsType, FormElementInstance } from '@/components/FormElements'
 import FormTitleChange from '@/components/FormTitleChange'
+import MoreButtonForm from '@/components/MoreButtonForm'
 import StatsCards from '@/components/Stats/StatsCards'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+
 import {
   Table,
   TableBody,
@@ -21,7 +17,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { format, formatDistance } from 'date-fns'
-import { MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
@@ -48,19 +43,11 @@ const Page = async ({ params: { id } }: { params: { id: string } }) => {
           <Button className='w-24' asChild>
             <Link href={'/forms/' + form?.id + '/edit'}>Edit</Link>
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <MoreHorizontal />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuItem asChild>
-                <Link href={'/submit/' + form?.shareUrl}>Visit</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem className='!text-red-500'>
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <MoreButtonForm
+            id={form.id}
+            published={form.published}
+            shareUrl={form.shareUrl}
+          />
         </div>
       </div>
       <div className='mt-10 container'>
