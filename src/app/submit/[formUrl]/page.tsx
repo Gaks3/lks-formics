@@ -8,9 +8,15 @@ const Page = async ({
 }: {
   params: { formUrl: string }
 }) => {
-  const form = await GetFormContentByUrl(formUrl)
+  let form
 
-  if (!form) return notFound()
+  try {
+    form = await GetFormContentByUrl(formUrl)
+  } catch (error) {
+    return notFound()
+  }
+
+  if (!form || !form.published) return notFound()
 
   return (
     <FormSubmit
