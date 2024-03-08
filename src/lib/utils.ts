@@ -1,4 +1,6 @@
+import { currentUser } from '@clerk/nextjs'
 import { type ClassValue, clsx } from 'clsx'
+import { notFound } from 'next/navigation'
 import { twMerge } from 'tailwind-merge'
 
 export const cn = (...inputs: ClassValue[]) => {
@@ -19,4 +21,10 @@ export const getDates = (startDate: Date, endDate: Date) => {
   }
 
   return dates
+}
+
+export const OnlyAdmin = async () => {
+  const user = await currentUser()
+
+  if (user?.publicMetadata.role !== 'admin') return notFound()
 }
