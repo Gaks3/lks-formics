@@ -6,17 +6,7 @@ import { useEffect, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import { DatePickerWithRange } from './DatePickerRange'
 import { GetMostUserFormByDate } from '@/actions/form'
-
-type Data =
-  | {
-      createdAt: Date
-      userId: string
-      _count: number
-    }[]
-  | {
-      _count: number
-      createdAt: Date
-    }[]
+import { toast } from './ui/use-toast'
 
 const FormChart = ({ initialData }: { initialData: string | null }) => {
   const [data, setData] = useState<string | null>(initialData)
@@ -31,12 +21,18 @@ const FormChart = ({ initialData }: { initialData: string | null }) => {
 
       setData(mostForm)
     } catch (error) {
-      console.log(error)
+      toast({
+        title: 'Error',
+        description: 'Something went wrong',
+        variant: 'destructive',
+      })
     }
   }
 
   useEffect(() => {
     getData()
+
+    //eslint-disable-next-line
   }, [date])
 
   return (

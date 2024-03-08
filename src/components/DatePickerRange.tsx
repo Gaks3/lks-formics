@@ -22,7 +22,7 @@ export function DatePickerWithRange({
   setDate: Dispatch<SetStateAction<DateRange | undefined>>
 }) {
   return (
-    <div className={'grid gap-2'}>
+    <div className={'grid gap-2 mt-8'}>
       <Popover>
         <PopoverTrigger asChild>
           <Button

@@ -56,6 +56,7 @@ const LineChart = ({ data }: { data: string }) => {
             toast({ title: 'User Id copied to clipboard' })
           },
         }}
+        className='min-h-[200px]'
       />
     </Suspense>
   )
