@@ -21,19 +21,26 @@ const Page = async () => {
         <Link href={'/dashboard/form'}>
           <StatsCard
             title='All Forms'
-            helperText='All Form has be created'
+            helperText='All Form has been created'
             value={allFormCount.toString()}
             icon={<NotebookText />}
             loading={false}
           />
         </Link>
-        <StatsCard
-          title='All Users'
-          helperText='All User sign up'
-          value={users.toString()}
-          icon={<Users />}
-          loading={false}
-        />
+        <Link
+          href={
+            'https://dashboard.clerk.com/apps/app_2cqZB3jUhX32PTaGdicM2qTMXJu/instances/ins_2cqZB3QX7I3EAbefra61TxOyKeJ'
+          }
+          target='_blank'
+        >
+          <StatsCard
+            title='All Users'
+            helperText='All User sign up'
+            value={users.toString()}
+            icon={<Users />}
+            loading={false}
+          />
+        </Link>
       </div>
       <div className='w-10/12 h-full mt-8'>
         <FormChart initialData={initialFormCharts} />
