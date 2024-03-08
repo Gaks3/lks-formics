@@ -203,6 +203,10 @@ export async function GetFormWithSubmissions(id: number) {
 }
 
 export async function GetMostUserFormByDate(startDate: Date, endDate: Date) {
+  const user = await currentUser()
+  if (!user || user?.publicMetadata.role !== 'admin')
+    throw new UserNotFoundErr()
+
   const forms = await prisma.form.groupBy({
     by: ['userId', 'createdAt'],
     _count: true,
@@ -229,7 +233,6 @@ export async function GetMostUserFormByDate(startDate: Date, endDate: Date) {
     if (exist.length == 0) return { _count: 0, createdAt: date }
 
     if (exist.length > 1) {
-      console.log(exist)
       return exist.reduce((a, b) => (a._count > b._count ? a : b))
     }
 
@@ -237,4 +240,20 @@ export async function GetMostUserFormByDate(startDate: Date, endDate: Date) {
   })
 
   return JSON.stringify(data)
+}
+
+export async function GetAllFormCount() {
+  return await prisma.form.count()
+}
+
+export async function GetAllForms() {
+  const user = await currentUser()
+  if (!user || user?.publicMetadata.role !== 'admin')
+    throw new UserNotFoundErr()
+
+  return await prisma.form.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  })
 }
