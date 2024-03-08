@@ -62,8 +62,8 @@ const CreateFormButton = () => {
           variant={'outline'}
           className='flex flex-col items-center justify-center min-h-[190px] h-full gap-4 border border-dashed group border-primary/20 hover:border-primary hover:cursor-pointer bg-primary/5 hover:bg-primary/20'
         >
-          <ClipboardList className='w-8 h-8 text-muted-foreground group-hover:text-white' />
-          <p className='text-lg font-semibold text-muted-foreground group-hover:text-white'>
+          <ClipboardList className='w-8 h-8 text-muted-foreground ' />
+          <p className='text-lg font-semibold text-muted-foreground '>
             Create new form
           </p>
         </Button>
